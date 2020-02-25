@@ -18,7 +18,7 @@
 (defn just-some-pure-function [filename record]
   (println "I'm just here to be an extra layer of complexity")
   (if (= "sad thing happened" (random-flaky-fn))
-    {:error (ring-resp/status 500) :data nil}
+    {:error ::flaky-fn-flaked :data nil}
     (db-layer-write-fn! filename record)))
 
 

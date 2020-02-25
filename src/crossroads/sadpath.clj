@@ -2,6 +2,7 @@
   (:require [ring.util.response :as ring-resp]))
 
 (defn handle [error data]
-  (if (= error :crossroads.core/file-does-not-exist)
-    (ring-resp/bad-request "not ok")
+  (case error
+    :crossroads.core/flaky-fn-flaked (ring-resp/status 500)
+    :crossroads.core/file-does-not-exist (ring-resp/bad-request "not ok")
     error))
