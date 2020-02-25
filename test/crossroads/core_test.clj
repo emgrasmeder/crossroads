@@ -19,18 +19,18 @@
 (use-fixtures :each (fn [f] (setup) (f) (cleanup)))
 
 
-(deftest write-a-record-test
+(deftest db-layer-write-fn!-test
   (testing "should do a side effect"
-    (crossroads/write-a-record! full-side-effect-file-path "1 abc")
+    (crossroads/db-layer-write-fn! full-side-effect-file-path "1 abc")
     (is (= "1 abc"
            (:out (sh/sh "cat" full-side-effect-file-path))))))
 
-(deftest pretend-i-got-a-POST-request-test
+(deftest web-handler-layer-fn-test
   (testing "should return a happy response in happy path"
     (is (= (ring-resp/response "ok")
-           (crossroads/pretend-i-got-a-POST-request full-side-effect-file-path "doesn't matter"))))
+           (crossroads/web-handler-layer-fn full-side-effect-file-path "doesn't matter"))))
 
   (testing "should return a sad response if filename doesn't exist"
     (is (= (ring-resp/bad-request "not ok")
-           (crossroads/pretend-i-got-a-POST-request "bad-file" "doesn't matter")))))
+           (crossroads/web-handler-layer-fn "bad-file" "doesn't matter")))))
 
