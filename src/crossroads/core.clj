@@ -1,6 +1,7 @@
 (ns crossroads.core
   (:gen-class)
-  (:require [ring.util.response :as ring-resp]))
+  (:require [ring.util.response :as ring-resp]
+            [crossroads.sadpath :as sadpath]))
 
 (defn file-exists? [filename]
   (.exists (clojure.java.io/as-file filename)))
@@ -12,7 +13,7 @@
   (if (file-exists? filename)
     (do (spit filename record :append true)
         {:error nil :data "ok"})
-    {:error (ring-resp/bad-request "not ok") :data nil}))
+    {:error ::bad-request-not-ok :data nil}))
 
 (defn just-some-pure-function [filename record]
   (println "I'm just here to be an extra layer of complexity")
@@ -26,11 +27,5 @@
   (let [{:keys [error data]} (just-some-pure-function filename record)]
     (if (nil? error)
       (ring-resp/response data)
-      error))
-  )
-
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
+      (sadpath/handle error data))))
 
