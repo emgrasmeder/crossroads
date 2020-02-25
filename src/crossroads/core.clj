@@ -13,7 +13,7 @@
   (if (file-exists? filename)
     (do (spit filename record :append true)
         {:error nil :data "ok"})
-    {:error ::bad-request-not-ok :data nil}))
+    {:error ::file-does-not-exist :data nil}))
 
 (defn just-some-pure-function [filename record]
   (println "I'm just here to be an extra layer of complexity")
