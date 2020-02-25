@@ -10,7 +10,8 @@
 (def full-side-effect-file-path (format "%s/%s" side-effects-folder side-effect-file-1))
 
 (defn setup []
-  (sh/sh "mkdir" side-effects-folder))
+  (sh/sh "mkdir" side-effects-folder)
+  (sh/sh "touch" full-side-effect-file-path))
 
 (defn cleanup []
   (sh/sh "rm" "-rf" side-effects-folder))
@@ -25,6 +26,11 @@
            (:out (sh/sh "cat" full-side-effect-file-path))))))
 
 (deftest pretend-i-got-a-POST-request-test
-  (testing "should return a happy response"
+  (testing "should return a happy response in happy path"
     (is (= (ring-resp/response "ok")
-           (crossroads/pretend-i-got-a-POST-request full-side-effect-file-path "doesn't matter")))))
+           (crossroads/pretend-i-got-a-POST-request full-side-effect-file-path "doesn't matter"))))
+
+  (testing "should return a sad response if filename doesn't exist"
+    (is (= (ring-resp/bad-request "not ok")
+           (crossroads/pretend-i-got-a-POST-request "bad-file" "doesn't matter")))))
+
