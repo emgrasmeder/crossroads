@@ -1,7 +1,6 @@
 (ns crossroads.core
   (:gen-class)
-  (:require [ring.util.response :as ring-resp]
-            [crossroads.sadpath :as sadpath]))
+  (:require [crossroads.sadpath :as sadpath]))
 
 (defn file-exists? [filename]
   (.exists (clojure.java.io/as-file filename)))
@@ -24,8 +23,5 @@
 
 ;; This function should be the only one who knows about the ring-resp library
 (defn web-handler-layer-fn [filename record]
-  (let [{:keys [error data]} (just-some-pure-function filename record)]
-    (if (nil? error)
-      (ring-resp/response data)
-      (sadpath/handle error data))))
+  (sadpath/handle (just-some-pure-function filename record)))
 
