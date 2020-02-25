@@ -14,8 +14,7 @@
         {:error nil :data "ok"})
     {:error ::file-does-not-exist :data nil}))
 
-(defn just-some-pure-function [filename record]
-  (println "I'm just here to be an extra layer of complexity")
+(defn just-some-filler-fn [filename record]
   (if (= "sad thing happened" (random-flaky-fn))
     {:error ::flaky-fn-flaked :data nil}
     (db-layer-write-fn! filename record)))
@@ -23,5 +22,5 @@
 
 ;; This function should be the only one who knows about the ring-resp library
 (defn web-handler-layer-fn [filename record]
-  (sadpath/handle (just-some-pure-function filename record)))
+  (sadpath/handle (just-some-filler-fn filename record)))
 

@@ -17,10 +17,7 @@
 (defn cleanup []
   (sh/sh "rm" "-rf" side-effects-folder))
 
-(use-fixtures :each (fn [f]
-                      (setup)
-                      (f)
-                      (cleanup)))
+(use-fixtures :each (fn [f] (setup) (f) (cleanup)))
 
 
 (deftest db-layer-write-fn!-test
