@@ -11,17 +11,23 @@
 (defn db-layer-write-fn! [filename record]
   (if (file-exists? filename)
     (do (spit filename record :append true)
-        (ring-resp/response "ok"))
-    (ring-resp/bad-request "not ok")))
+        {:error nil :data "ok"})
+    {:error (ring-resp/bad-request "not ok") :data nil}))
 
 (defn just-some-pure-function [filename record]
   (println "I'm just here to be an extra layer of complexity")
   (if (= "sad thing happened" (random-flaky-fn))
-    (ring-resp/status 500)
+    {:error (ring-resp/status 500) :data nil}
     (db-layer-write-fn! filename record)))
 
+
+;; This function should be the only one who knows about the ring-resp library
 (defn web-handler-layer-fn [filename record]
-  (just-some-pure-function filename record))
+  (let [{:keys [error data]} (just-some-pure-function filename record)]
+    (if (nil? error)
+      (ring-resp/response data)
+      error))
+  )
 
 (defn -main
   "I don't do a whole lot ... yet."
